@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -19,14 +19,12 @@ import static org.hamcrest.Matchers.hasSize;
 @SpringBootTest
 @AutoConfigureMockMvc
 class SpringBootEmployeeApplicationTests {
+
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @Autowired
     private MockMvc mockMvc;
-	@Test
-	void contextLoads() {
-	}
 
     @Test
     void should_return_employees_when_get_all_given_employees() throws Exception {
@@ -78,5 +76,29 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()));
+    }
+
+    @Test
+    void should_save_employee_when_create_employee_given_employee() throws Exception {
+        //Given
+        String givenEmployee = "{\n" +
+                "    \"name\": \"d\",\n" +
+                "    \"age\": 20,\n" +
+                "    \"gender\": \"MALE\",\n" +
+                "    \"salary\": 5000.0\n" +
+                "}";
+
+        //When
+
+        //Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/employees")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenEmployee))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("4"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("d"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(20))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("MALE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(5000.0));
     }
 }

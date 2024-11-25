@@ -9,6 +9,7 @@ import java.util.List;
 
 @Repository
 public class EmployeeRepository {
+
     private final List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
@@ -21,7 +22,7 @@ public class EmployeeRepository {
         return employees;
     }
 
-    public Employee getById(Integer id){
+    public Employee getById(Integer id) {
         return employees.stream()
                 .filter(employee -> employee.getId().equals(id))
                 .findFirst()
@@ -32,5 +33,11 @@ public class EmployeeRepository {
         return employees.stream()
                 .filter(employee -> employee.getGender().equals(gender))
                 .toList();
+    }
+
+    public Employee createEmployee(Employee employee) {
+        employee.setId(employees.size() + 1);
+        employees.add(employee);
+        return employee;
     }
 }
