@@ -3,7 +3,6 @@ package com.oocl.springbootemployee.controller;
 import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
