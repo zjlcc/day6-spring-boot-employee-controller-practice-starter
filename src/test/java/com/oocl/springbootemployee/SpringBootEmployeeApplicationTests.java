@@ -62,4 +62,21 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(employees.get(0).getGender().name()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(employees.get(0).getSalary()));
     }
+
+    @Test
+    void should_return_employees_when_get_by_gender_given_MALE() throws Exception {
+        //Given
+        List<Employee> employees = employeeRepository.getAll();
+        String gender = "MALE";
+
+        //When
+
+        //Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees")
+                        .param("gender", gender))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()));
+    }
 }
