@@ -100,5 +100,9 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(20))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("MALE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(5000.0));
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(4)));
     }
 }
