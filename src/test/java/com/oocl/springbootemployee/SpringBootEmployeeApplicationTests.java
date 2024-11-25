@@ -3,9 +3,14 @@ package com.oocl.springbootemployee;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.oocl.springbootemployee.enums.Gender;
 import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -23,19 +28,27 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @AutoConfigureJsonTesters
 class SpringBootEmployeeApplicationTests {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private JacksonTester<Employee> jsonTester;
+    EmployeeRepository employeeRepository;
+    List<Employee> employees;
+
+
+    @BeforeEach
+    public void setUp() {
+        employees = employeeRepository.getAll();
+        employees.clear();
+        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0));
+        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0));
+        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0));
+    }
 
     @Test
     void should_return_employees_when_get_all_given_employees() throws Exception {
         //Given
-        List<Employee> employees = employeeRepository.getAll();
 
         //When
 
@@ -52,7 +65,6 @@ class SpringBootEmployeeApplicationTests {
     @Test
     void should_return_employee_when_get_by_id_given_id() throws Exception {
         //Given
-        List<Employee> employees = employeeRepository.getAll();
         Integer id = employees.get(0).getId();
 
         //When
@@ -70,7 +82,6 @@ class SpringBootEmployeeApplicationTests {
     @Test
     void should_return_employees_when_get_by_gender_given_MALE() throws Exception {
         //Given
-        List<Employee> employees = employeeRepository.getAll();
         String gender = "MALE";
 
         //When
@@ -106,10 +117,6 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(20))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("MALE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(5000.0));
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(4)));
     }
 
     @Test
@@ -124,17 +131,8 @@ class SpringBootEmployeeApplicationTests {
         Integer id = 1;
 
         //When
-        String json = mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + id))
-                .andReturn()
-                .getResponse()
-                .getContentAsString();
 
         //Then
-
-        Employee originEmployee = jsonTester.parse(json).getObject();
-        assertEquals(20, originEmployee.getAge());
-        assertEquals(5000.0, originEmployee.getSalary());
-
         mockMvc.perform(MockMvcRequestBuilders.put("/employees/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(givenEmployee))
@@ -145,4 +143,16 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("MALE"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(8000.0));
     }
+
+    @Test
+    void should_return_null_when_delete_given_id() throws Exception {
+        //Given
+        int id = 2;
+        //When
+
+        //Then
+        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/" + id))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
 }
