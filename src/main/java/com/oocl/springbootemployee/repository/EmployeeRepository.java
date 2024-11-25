@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class EmployeeRepository {
@@ -46,5 +47,10 @@ public class EmployeeRepository {
         beUpdateEmployee.setAge(employee.getAge());
         beUpdateEmployee.setSalary(employee.getSalary());
         return beUpdateEmployee;
+    }
+
+    public void deleteEmployee(Integer id) {
+        Employee employee = getById(id);
+        employees.remove(employee);
     }
 }
