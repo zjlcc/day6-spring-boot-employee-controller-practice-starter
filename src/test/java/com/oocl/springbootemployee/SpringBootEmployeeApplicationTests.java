@@ -1,45 +1,39 @@
 package com.oocl.springbootemployee;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.oocl.springbootemployee.enums.Gender;
 import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureJsonTesters
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SpringBootEmployeeApplicationTests {
-
-
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     EmployeeRepository employeeRepository;
-    List<Employee> employees;
-
+    List<Employee> employees = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
-        employees = employeeRepository.getAll();
         employees.clear();
         employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0));
         employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0));
@@ -47,6 +41,7 @@ class SpringBootEmployeeApplicationTests {
     }
 
     @Test
+    @Order(1)
     void should_return_employees_when_get_all_given_employees() throws Exception {
         //Given
 
@@ -63,6 +58,7 @@ class SpringBootEmployeeApplicationTests {
 
 
     @Test
+    @Order(2)
     void should_return_employee_when_get_by_id_given_id() throws Exception {
         //Given
         Integer id = employees.get(0).getId();
@@ -80,6 +76,7 @@ class SpringBootEmployeeApplicationTests {
     }
 
     @Test
+    @Order(3)
     void should_return_employees_when_get_by_gender_given_MALE() throws Exception {
         //Given
         String gender = "MALE";
@@ -96,6 +93,7 @@ class SpringBootEmployeeApplicationTests {
     }
 
     @Test
+    @Order(4)
     void should_save_employee_when_create_employee_given_employee() throws Exception {
         //Given
         String givenEmployee = "{\n" +
@@ -120,6 +118,7 @@ class SpringBootEmployeeApplicationTests {
     }
 
     @Test
+    @Order(5)
     void should_update_employee_age_and_salary_when_update_employee_given_age_and_salary() throws Exception {
         //Given
 
@@ -128,7 +127,7 @@ class SpringBootEmployeeApplicationTests {
                 "    \"salary\": 8000.0\n" +
                 "}";
 
-        Integer id = 1;
+        int id = 1;
 
         //When
 
@@ -145,6 +144,7 @@ class SpringBootEmployeeApplicationTests {
     }
 
     @Test
+    @Order(6)
     void should_return_null_when_delete_given_id() throws Exception {
         //Given
         int id = 2;
@@ -153,6 +153,6 @@ class SpringBootEmployeeApplicationTests {
         //Then
         mockMvc.perform(MockMvcRequestBuilders.delete("/employees/" + id))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
+        assertEquals(employeeRepository.getAll().size(),3);
     }
-
 }
