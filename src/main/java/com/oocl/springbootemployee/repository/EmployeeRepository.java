@@ -20,4 +20,11 @@ public class EmployeeRepository {
     public List<Employee> getAll() {
         return employees;
     }
+
+    public Employee getById(Integer id){
+        return employees.stream()
+                .filter(employee -> employee.getId().equals(id))
+                .findFirst()
+                .orElseThrow();
+    }
 }
