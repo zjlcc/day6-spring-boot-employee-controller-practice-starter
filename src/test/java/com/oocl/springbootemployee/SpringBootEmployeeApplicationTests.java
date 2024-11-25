@@ -45,4 +45,21 @@ class SpringBootEmployeeApplicationTests {
     }
 
 
+    @Test
+    void should_return_employee_when_get_by_id_given_id() throws Exception {
+        //Given
+        List<Employee> employees = employeeRepository.getAll();
+        Integer id = employees.get(0).getId();
+
+        //When
+
+        //Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + id))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(employees.get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employees.get(0).getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(employees.get(0).getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(employees.get(0).getGender().name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(employees.get(0).getSalary()));
+    }
 }
