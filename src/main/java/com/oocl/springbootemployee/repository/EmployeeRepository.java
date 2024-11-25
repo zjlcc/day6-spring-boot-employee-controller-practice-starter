@@ -27,4 +27,10 @@ public class EmployeeRepository {
                 .findFirst()
                 .orElseThrow();
     }
+
+    public List<Employee> getAllByGender(Gender gender) {
+        return employees.stream()
+                .filter(employee -> employee.getGender().equals(gender))
+                .toList();
+    }
 }

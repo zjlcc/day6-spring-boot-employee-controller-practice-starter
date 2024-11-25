@@ -1,5 +1,6 @@
 package com.oocl.springbootemployee.controller;
 
+import com.oocl.springbootemployee.enums.Gender;
 import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,5 +27,10 @@ public class EmployeeController {
     @GetMapping("/{id}")
     public Employee getById(@PathVariable Integer id){
         return employeeRepository.getById(id);
+    }
+
+    @GetMapping(params = "gender")
+    public List<Employee> getAllByGender(Gender gender) {
+        return employeeRepository.getAllByGender(gender);
     }
 }
