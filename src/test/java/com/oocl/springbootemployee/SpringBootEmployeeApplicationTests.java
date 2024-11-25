@@ -1,23 +1,26 @@
 package com.oocl.springbootemployee;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.oocl.springbootemployee.model.Employee;
 import com.oocl.springbootemployee.repository.EmployeeRepository;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
-
-import static org.hamcrest.Matchers.hasSize;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@AutoConfigureJsonTesters
 class SpringBootEmployeeApplicationTests {
 
     @Autowired
@@ -25,6 +28,9 @@ class SpringBootEmployeeApplicationTests {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JacksonTester<Employee> jsonTester;
 
     @Test
     void should_return_employees_when_get_all_given_employees() throws Exception {
@@ -104,5 +110,39 @@ class SpringBootEmployeeApplicationTests {
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(4)));
+    }
+
+    @Test
+    void should_update_employee_age_and_salary_when_update_employee_given_age_and_salary() throws Exception {
+        //Given
+
+        String givenEmployee = "{\n" +
+                "    \"age\": 30,\n" +
+                "    \"salary\": 8000.0\n" +
+                "}";
+
+        Integer id = 1;
+
+        //When
+        String json = mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + id))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        //Then
+
+        Employee originEmployee = jsonTester.parse(json).getObject();
+        assertEquals(20, originEmployee.getAge());
+        assertEquals(5000.0, originEmployee.getSalary());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/employees/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(givenEmployee))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("a"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(30))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("MALE"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(8000.0));
     }
 }
