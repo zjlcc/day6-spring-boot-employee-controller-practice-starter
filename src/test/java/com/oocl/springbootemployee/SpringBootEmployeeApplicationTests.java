@@ -155,4 +155,24 @@ class SpringBootEmployeeApplicationTests {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         assertEquals(employeeRepository.getAll().size(),3);
     }
+    
+    @Test
+    @Order(1)
+    void should_return_employees_when_get_employees_by_page_given_page_1_size_5() throws Exception {
+        //Given
+        Integer page = 1;
+        Integer size = 5;
+        //When
+        
+        //Then
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees")
+                        .param("page", String.valueOf(page))
+                        .param("size", String.valueOf(size)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employees.get(2).getName()));
+    }
+    
 }

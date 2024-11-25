@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/employees")
@@ -48,5 +49,13 @@ public class EmployeeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteEmployee(@PathVariable Integer id){
         employeeRepository.deleteEmployee(id);
+    }
+
+    @GetMapping(params = {"page", "size"})
+    public List<Employee> getByPage(Integer page, Integer size){
+        if(Objects.isNull(page)||Objects.isNull(size)){
+            return employeeRepository.getAll();
+        }
+        return employeeRepository.getByPage(page, size);
     }
 }
