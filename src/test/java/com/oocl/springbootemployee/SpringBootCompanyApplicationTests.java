@@ -29,7 +29,7 @@ public class SpringBootCompanyApplicationTests {
 
     @Autowired
     CompanyRepository companyRepository;
-    List<Company> companies = new ArrayList<>();
+    List<Company> companies = companyRepository.getAll();
 
     @BeforeEach
     public void setUp() {
