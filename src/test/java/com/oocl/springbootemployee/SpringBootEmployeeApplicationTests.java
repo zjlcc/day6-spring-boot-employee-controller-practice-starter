@@ -30,14 +30,13 @@ class SpringBootEmployeeApplicationTests {
 
     @Autowired
     EmployeeRepository employeeRepository;
-    List<Employee> employees = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
-        employees.clear();
-        employees.add(new Employee(1, "a", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(2, "b", 20, Gender.MALE, 5000.0));
-        employees.add(new Employee(3, "c", 20, Gender.FEMALE, 5000.0));
+        employeeRepository.getAll().clear();
+        employeeRepository.createEmployee(new Employee(1, "a", 20, Gender.MALE, 5000.0));
+        employeeRepository.createEmployee(new Employee(2, "b", 20, Gender.MALE, 5000.0));
+        employeeRepository.createEmployee(new Employee(3, "c", 20, Gender.FEMALE, 5000.0));
     }
 
     @Test
@@ -51,9 +50,9 @@ class SpringBootEmployeeApplicationTests {
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employees.get(2).getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employeeRepository.getAll().get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employeeRepository.getAll().get(1).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employeeRepository.getAll().get(2).getName()));
     }
 
 
@@ -61,18 +60,18 @@ class SpringBootEmployeeApplicationTests {
     @Order(2)
     void should_return_employee_when_get_by_id_given_id() throws Exception {
         //Given
-        Integer id = employees.get(0).getId();
+        Integer id = employeeRepository.getAll().get(0).getId();
 
         //When
 
         //Then
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(employees.get(0).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employees.get(0).getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(employees.get(0).getAge()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(employees.get(0).getGender().name()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(employees.get(0).getSalary()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(employeeRepository.getAll().get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(employeeRepository.getAll().get(0).getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(employeeRepository.getAll().get(0).getAge()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value(employeeRepository.getAll().get(0).getGender().name()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(employeeRepository.getAll().get(0).getSalary()));
     }
 
     @Test
@@ -88,8 +87,8 @@ class SpringBootEmployeeApplicationTests {
                         .param("gender", gender))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employeeRepository.getAll().get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employeeRepository.getAll().get(1).getName()));
     }
 
     @Test
@@ -153,7 +152,7 @@ class SpringBootEmployeeApplicationTests {
         //Then
         mockMvc.perform(MockMvcRequestBuilders.delete("/employees/" + id))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
-        assertEquals(employeeRepository.getAll().size(),3);
+        assertEquals(employeeRepository.getAll().size(),2);
     }
     
     @Test
@@ -170,9 +169,9 @@ class SpringBootEmployeeApplicationTests {
                         .param("size", String.valueOf(size)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employees.get(0).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employees.get(1).getName()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employees.get(2).getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(employeeRepository.getAll().get(0).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").value(employeeRepository.getAll().get(1).getName()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").value(employeeRepository.getAll().get(2).getName()));
     }
     
 }
